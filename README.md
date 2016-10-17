@@ -1,4 +1,4 @@
-# Spread Calculator
+# Spread Calculator [![Build Status][travis-build-status]][travis-repo]
 Calculate the yield spread between a corporate bond and its government bond benchmark
 
 ## Challenge #1
@@ -25,3 +25,6 @@ C1,G1,1.60%
 To explain, the best candidate for a benchmark for C1 (corporate bond) is the G1 (government bond) since their difference in term is only 0.9 years vs G2 that is 1.7 years away. Hence, the `spread_to_benchmark` for C1 is C1.yield - G1.yield = 1.60%.
 
 Given a list of corporate and government bonds, find a benchmark bond for each corporate bond and calculate the spread to benchmark.
+
+ [travis-build-status]: https://travis-ci.org/mariusbutuc/spread-calculator.svg?branch=master
+ [travis-repo]:https://travis-ci.org/mariusbutuc/spread-calculator

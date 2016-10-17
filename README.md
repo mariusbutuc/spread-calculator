@@ -1,4 +1,5 @@
-# Spread Calculator [![Build Status][travis-build-status]][travis-repo]
+# Spread Calculator [![Build Status][travis-badge]][travis-repo] [![Code Coverage][codecov-badge]][codecov-repo]
+
 Calculate the yield spread between a corporate bond and its government bond benchmark
 
 ## Challenge #1
@@ -26,5 +27,7 @@ To explain, the best candidate for a benchmark for C1 (corporate bond) is the G1
 
 Given a list of corporate and government bonds, find a benchmark bond for each corporate bond and calculate the spread to benchmark.
 
- [travis-build-status]: https://travis-ci.org/mariusbutuc/spread-calculator.svg?branch=master
+ [travis-badge]: https://travis-ci.org/mariusbutuc/spread-calculator.svg?branch=master
  [travis-repo]:https://travis-ci.org/mariusbutuc/spread-calculator
+ [codecov-badge]: https://codecov.io/gh/mariusbutuc/spread-calculator/branch/master/graph/badge.svg
+ [codecov-repo]: https://codecov.io/gh/mariusbutuc/spread-calculator

@@ -14,10 +14,10 @@ class SpreadCalculator
     end
   end
 
-  def calculate
+  def spread_to_benchmark
     benchmarks = corporate_bonds.map do |corporate_bond|
       benchmark = closest_government_bond(corporate_bond: corporate_bond)
-      spread    = spread_to_benchmark(corporate_bond, benchmark)
+      spread    = delta(corporate_bond.yield_spread, benchmark.yield_spread)
 
       [corporate_bond, benchmark, spread]
     end
@@ -29,16 +29,12 @@ class SpreadCalculator
 
   def closest_government_bond(corporate_bond:)
     government_bonds.min_by do |bond|
-      difference(bond.term, corporate_bond.term)
+      delta(bond.term, corporate_bond.term)
     end
   end
 
-  def difference(minuend, subtrahend)
+  def delta(minuend, subtrahend)
     (minuend - subtrahend).abs
-  end
-
-  def spread_to_benchmark(corporate_bond, government_bond)
-    difference(corporate_bond.yield_spread, government_bond.yield_spread)
   end
 
   def output(benchmarks)

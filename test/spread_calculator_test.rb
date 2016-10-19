@@ -32,27 +32,27 @@ class SpreadCalculatorTest < Minitest::Test
     end
   end
 
-  def test_calculate_returns_expected_results
+  def test_spread_to_benchmark_returns_expected_results
     calculator = SpreadCalculator.new(file_path: 'data/spread_to_benchmark_sample.csv')
     expected_output = <<-CSV.gsub(' ', '')
       bond,benchmark,spread_to_benchmark
       C1,G1,1.60%
     CSV
 
-    assert_equal expected_output, calculator.calculate
+    assert_equal expected_output, calculator.spread_to_benchmark
   end
 
-  def test_calculate_selects_first_of_two_government_bonds_with_same_term
+  def test_spread_to_benchmark_selects_first_of_two_government_bonds_with_same_term
     calculator = SpreadCalculator.new(file_path: 'data/same_term.csv')
     expected_output = <<-CSV.gsub(' ', '')
       bond,benchmark,spread_to_benchmark
       C1,G1,0.50%
     CSV
 
-    assert_equal expected_output, calculator.calculate
+    assert_equal expected_output, calculator.spread_to_benchmark
   end
 
-  def test_calculate_sample_input
+  def test_spread_to_benchmark_from_sample_input
     calculator = SpreadCalculator.new(file_path: 'data/sample_input.csv')
     output = <<-CSV.gsub(' ', '')
       bond,benchmark,spread_to_benchmark
@@ -65,6 +65,6 @@ class SpreadCalculatorTest < Minitest::Test
       C7,G6,2.50%
     CSV
 
-    assert_equal output, calculator.calculate
+    assert_equal output, calculator.spread_to_benchmark
   end
 end

@@ -11,7 +11,7 @@ class SpreadCalculatorTest < Minitest::Test
   end
 
   def test_extracts_the_corporate_bonds
-    calculator = SpreadCalculator.new(file_path: 'data/happy_path.csv')
+    calculator = SpreadCalculator.new(file_path: 'data/spread_to_benchmark_sample.csv')
     bonds = calculator.corporate_bonds
 
     refute_empty bonds
@@ -22,7 +22,7 @@ class SpreadCalculatorTest < Minitest::Test
   end
 
   def test_extracts_the_government_bonds
-    calculator = SpreadCalculator.new(file_path: 'data/happy_path.csv')
+    calculator = SpreadCalculator.new(file_path: 'data/spread_to_benchmark_sample.csv')
     bonds = calculator.government_bonds
 
     refute_empty bonds
@@ -33,7 +33,7 @@ class SpreadCalculatorTest < Minitest::Test
   end
 
   def test_calculate_returns_expected_results
-    calculator = SpreadCalculator.new(file_path: 'data/happy_path.csv')
+    calculator = SpreadCalculator.new(file_path: 'data/spread_to_benchmark_sample.csv')
     expected_output = <<-CSV.gsub(' ', '')
       bond,benchmark,spread_to_benchmark
       C1,G1,1.60%

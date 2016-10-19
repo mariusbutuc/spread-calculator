@@ -27,7 +27,7 @@ class BondParserTest < Minitest::Test
   end
 
   def test_parse_returns_bonds_from_valid_csv_file
-    parser = BondParser.new(file_path: 'data/happy_path.csv')
+    parser = BondParser.new(file_path: 'data/sample_input.csv')
     bonds = parser.parse
 
     refute_empty bonds

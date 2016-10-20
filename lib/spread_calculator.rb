@@ -42,8 +42,12 @@ class SpreadCalculator
       csv << OUTPUT_HEADERS
       benchmarks.each do |benchmark_details|
         corporate_bond, benchmark, spread = benchmark_details
-        csv << [corporate_bond.id, benchmark.id, sprintf('%.2f%', spread)]
+        csv << [corporate_bond.id, benchmark.id, printable(spread)]
       end
     end
+  end
+
+  def printable(spread)
+    sprintf('%.2f%', spread)
   end
 end

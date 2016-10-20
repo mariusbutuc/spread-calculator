@@ -1,4 +1,3 @@
-require 'pry'
 require_relative 'bond_parser'
 require_relative 'output_formatter'
 
@@ -32,6 +31,7 @@ class SpreadCalculator
     curves = corporate_bonds.map do |corporate_bond|
       lower, upper = closest_government_bonds(corporate_bond: corporate_bond)
       spread = interpolated_yield(corporate: corporate_bond, lower: lower, upper: upper)
+
       [corporate_bond.id, spread]
     end
 
@@ -55,11 +55,14 @@ class SpreadCalculator
   end
 
   def interpolated_yield(corporate:, lower:, upper:)
-    corporate.yield_spread - (
+    delta(
+      corporate.yield_spread,
       (
-        (corporate.term - lower.term) * upper.yield_spread +
-        (upper.term - corporate.term) * lower.yield_spread
-      ) / (upper.term - lower.term)
+        (
+          (corporate.term - lower.term) * upper.yield_spread +
+          (upper.term - corporate.term) * lower.yield_spread
+        ) / (upper.term - lower.term)
+      )
     )
   end
 

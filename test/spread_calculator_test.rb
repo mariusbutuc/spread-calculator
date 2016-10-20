@@ -92,6 +92,18 @@ class SpreadCalculatorTest < Minitest::Test
     assert_equal output, calculator.spread_to_curve
   end
 
+  def test_spread_to_curve_for_corporate_bond_term_equal_to_government_bond_term
+    same_term = '12 years'
+    @calculator = SpreadCalculator.new(bonds: [
+      Bond.new(id: 'C1', type: :corporate, term: same_term, yield_spread: '5.30%'),
+      Bond.new(id: 'G1', type: :government, term: '10.3 years', yield_spread: '4.80%'),
+      Bond.new(id: 'G2', type: :government, term: same_term, yield_spread: '5.70%'),
+      Bond.new(id: 'G3', type: :government, term: '15.7 years', yield_spread: '6.90%'),
+    ])
+
+    assert_match 'C1,0.40%', calculator.spread_to_curve
+  end
+
   private
 
   def calculator

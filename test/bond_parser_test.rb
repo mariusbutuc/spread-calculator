@@ -18,14 +18,6 @@ class BondParserTest < Minitest::Test
     assert_equal "#{missing_file_path} does not exist", error.message
   end
 
-  def test_parse_returns_no_bonds_for_invalid_csv_file
-    Tempfile.open('foo', '/tmp') do |not_a_csv|
-      parser = BondParser.new(file_path: not_a_csv)
-
-      assert_empty parser.parse
-    end
-  end
-
   def test_parse_returns_bonds_from_valid_csv_file
     parser = BondParser.new(file_path: 'data/sample_input.csv')
     bonds = parser.parse
@@ -34,7 +26,34 @@ class BondParserTest < Minitest::Test
     assert_instance_of Bond, bonds.first
   end
 
-  def test_parse_expects_csv_header_to_be_present
-    # CSV_HEADER = 'bond,type,term,yield'
+  def test_parse_requires_csv_header
+    Tempfile.open(['foo', '.csv'], '/tmp') do |headerless_csv|
+      headerless_csv.write <<-CSV.gsub(' ', '')
+        C1,corporate,10.3 years,5.30%
+        G1,government,9.4 years,3.70%
+        G2,government,12 years,4.80%
+      CSV
+      headerless_csv.rewind
+
+      assert_raises BondParser::InvalidCsvHeaderError do
+        BondParser.new(file_path: headerless_csv.path).parse
+      end
+    end
+  end
+
+  def test_parse_requires_all_bond_attributes
+    Tempfile.open(['foo', '.csv'], '/tmp') do |yield_missing_csv|
+      yield_missing_csv.write <<-CSV.gsub(' ', '')
+        bond,type,term
+        C1,corporate,10.3 years
+        G1,government,9.4 years
+        G2,government,12 years
+      CSV
+      yield_missing_csv.rewind
+
+      assert_raises BondParser::InvalidCsvHeaderError do
+        BondParser.new(file_path: yield_missing_csv.path).parse
+      end
+    end
   end
 end

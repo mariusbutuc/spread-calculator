@@ -1,8 +1,13 @@
+require 'pry'
 require_relative 'bond_parser'
+require_relative 'output_formatter'
 
 class SpreadCalculator
-  OUTPUT_HEADERS = %w(bond benchmark spread_to_benchmark).freeze.map(&:freeze)
-  CORPORATE_BOND_TYPE = :corporate
+  include OutputFormatter
+
+  SPREAD_TO_BENCHMARK_HEADERS = %w(bond benchmark spread_to_benchmark).freeze.map(&:freeze)
+  SPREAD_TO_CURVE_HEADERS     = %w(bond spread_to_curve).freeze.map(&:freeze)
+  CORPORATE_BOND_TYPE         = :corporate
 
   attr_reader :corporate_bonds, :government_bonds
 
@@ -19,10 +24,10 @@ class SpreadCalculator
       benchmark = closest_government_bond(corporate_bond: corporate_bond)
       spread    = delta(corporate_bond.yield_spread, benchmark.yield_spread)
 
-      [corporate_bond, benchmark, spread]
+      [corporate_bond.id, benchmark.id, spread]
     end
 
-    output(benchmarks)
+    to_csv(headers: SPREAD_TO_BENCHMARK_HEADERS, rows: benchmarks)
   end
 
   private
@@ -35,19 +40,5 @@ class SpreadCalculator
 
   def delta(minuend, subtrahend)
     (minuend - subtrahend).abs
-  end
-
-  def output(benchmarks)
-    CSV.generate(headers: :first_row) do |csv|
-      csv << OUTPUT_HEADERS
-      benchmarks.each do |benchmark_details|
-        corporate_bond, benchmark, spread = benchmark_details
-        csv << [corporate_bond.id, benchmark.id, printable(spread)]
-      end
-    end
-  end
-
-  def printable(spread)
-    sprintf('%.2f%', spread)
   end
 end

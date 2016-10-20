@@ -11,9 +11,7 @@ class SpreadCalculator
 
   attr_reader :corporate_bonds, :government_bonds
 
-  def initialize(file_path:)
-    bonds = BondParser.new(file_path: file_path).parse
-
+  def initialize(bonds:)
     @corporate_bonds, @government_bonds = bonds.partition do |bond|
       bond.type == CORPORATE_BOND_TYPE
     end

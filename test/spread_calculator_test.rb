@@ -2,38 +2,36 @@ require_relative 'test_helper'
 require_relative '../lib/spread_calculator'
 
 class SpreadCalculatorTest < Minitest::Test
-  def test_expects_file_path_as_input
+  def test_requires_bonds
     error = assert_raises ArgumentError do
       SpreadCalculator.new
     end
 
-    assert_equal 'missing keyword: file_path', error.message
+    assert_equal 'missing keyword: bonds', error.message
   end
 
   def test_extracts_the_corporate_bonds
-    calculator = SpreadCalculator.new(file_path: 'data/spread_to_benchmark_sample.csv')
-    bonds = calculator.corporate_bonds
+    corporate_bonds = calculator.corporate_bonds
 
-    refute_empty bonds
-    bonds.each do |bond|
+    refute_empty corporate_bonds
+    corporate_bonds.each do |bond|
       assert_instance_of Bond, bond
       assert_equal :corporate, bond.type
     end
   end
 
   def test_extracts_the_government_bonds
-    calculator = SpreadCalculator.new(file_path: 'data/spread_to_benchmark_sample.csv')
-    bonds = calculator.government_bonds
+    government_bonds = calculator.government_bonds
 
-    refute_empty bonds
-    bonds.each do |bond|
+    refute_empty government_bonds
+    government_bonds.each do |bond|
       assert_instance_of Bond, bond
       assert_equal :government, bond.type
     end
   end
 
   def test_spread_to_benchmark_confirms_sample_output_results
-    calculator = SpreadCalculator.new(file_path: 'data/spread_to_benchmark_sample.csv')
+    @bonds_file_path = 'data/spread_to_benchmark_sample.csv'
     expected_output = <<-CSV.gsub(' ', '')
       bond,benchmark,spread_to_benchmark
       C1,G1,1.60%
@@ -43,17 +41,17 @@ class SpreadCalculatorTest < Minitest::Test
   end
 
   def test_spread_to_benchmark_selects_first_of_two_government_bonds_with_same_term
-    calculator = SpreadCalculator.new(file_path: 'data/same_term.csv')
-    expected_output = <<-CSV.gsub(' ', '')
-      bond,benchmark,spread_to_benchmark
-      C1,G1,0.50%
-    CSV
+    same_term = '12 years'
+    @calculator = SpreadCalculator.new(bonds: [
+      Bond.new(id: 'C1', type: :corporate, term: '10.3 years', yield_spread: '5.30%'),
+      Bond.new(id: 'G1', type: :government, term: same_term, yield_spread: '4.80%'),
+      Bond.new(id: 'G2', type: :government, term: same_term, yield_spread: '3.70%'),
+    ])
 
-    assert_equal expected_output, calculator.spread_to_benchmark
+    assert_match 'C1,G1,0.50%', calculator.spread_to_benchmark
   end
 
   def test_spread_to_benchmark_calculates_expected_values_from_sample_input
-    calculator = SpreadCalculator.new(file_path: 'data/sample_input.csv')
     output = <<-CSV.gsub(' ', '')
       bond,benchmark,spread_to_benchmark
       C1,G1,1.60%
@@ -69,7 +67,7 @@ class SpreadCalculatorTest < Minitest::Test
   end
 
   def test_spread_to_curve_confirms_sample_output_results
-    calculator = SpreadCalculator.new(file_path: 'data/spread_to_curve_sample.csv')
+    @bonds_file_path = 'data/spread_to_curve_sample.csv'
     expected_output = <<-CSV.gsub(' ', '')
       bond,spread_to_curve
       C1,1.22%
@@ -80,7 +78,6 @@ class SpreadCalculatorTest < Minitest::Test
   end
 
   def test_spread_to_curve_calculates_expected_values_from_sample_input
-    calculator = SpreadCalculator.new(file_path: 'data/sample_input.csv')
     output = <<-CSV.gsub(' ', '')
       bond,spread_to_curve
       C1,1.43%
@@ -93,5 +90,19 @@ class SpreadCalculatorTest < Minitest::Test
     CSV
 
     assert_equal output, calculator.spread_to_curve
+  end
+
+  private
+
+  def calculator
+    @calculator ||= SpreadCalculator.new(bonds: bonds)
+  end
+
+  def bonds
+    @bonds ||= BondParser.new(file_path: bonds_file_path).parse
+  end
+
+  def bonds_file_path
+    @bonds_file_path ||= 'data/sample_input.csv'
   end
 end

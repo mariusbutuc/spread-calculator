@@ -32,7 +32,7 @@ class SpreadCalculatorTest < Minitest::Test
     end
   end
 
-  def test_spread_to_benchmark_returns_expected_results
+  def test_spread_to_benchmark_confirms_sample_output_results
     calculator = SpreadCalculator.new(file_path: 'data/spread_to_benchmark_sample.csv')
     expected_output = <<-CSV.gsub(' ', '')
       bond,benchmark,spread_to_benchmark
@@ -52,7 +52,7 @@ class SpreadCalculatorTest < Minitest::Test
     assert_equal expected_output, calculator.spread_to_benchmark
   end
 
-  def test_spread_to_benchmark_from_sample_input
+  def test_spread_to_benchmark_calculates_expected_values_from_sample_input
     calculator = SpreadCalculator.new(file_path: 'data/sample_input.csv')
     output = <<-CSV.gsub(' ', '')
       bond,benchmark,spread_to_benchmark
@@ -66,5 +66,32 @@ class SpreadCalculatorTest < Minitest::Test
     CSV
 
     assert_equal output, calculator.spread_to_benchmark
+  end
+
+  def test_spread_to_curve_confirms_sample_output_results
+    calculator = SpreadCalculator.new(file_path: 'data/spread_to_curve_sample.csv')
+    expected_output = <<-CSV.gsub(' ', '')
+      bond,spread_to_curve
+      C1,1.22%
+      C2,2.98%
+    CSV
+
+    assert_equal expected_output, calculator.spread_to_curve
+  end
+
+  def test_spread_to_curve_calculates_expected_values_from_sample_input
+    calculator = SpreadCalculator.new(file_path: 'data/sample_input.csv')
+    output = <<-CSV.gsub(' ', '')
+      bond,spread_to_curve
+      C1,1.43%
+      C2,1.63%
+      C3,2.47%
+      C4,2.27%
+      C5,1.90%
+      C6,1.57%
+      C7,2.83%
+    CSV
+
+    assert_equal output, calculator.spread_to_curve
   end
 end

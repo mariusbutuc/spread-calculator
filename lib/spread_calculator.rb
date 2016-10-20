@@ -30,12 +30,39 @@ class SpreadCalculator
     to_csv(headers: SPREAD_TO_BENCHMARK_HEADERS, rows: benchmarks)
   end
 
+  def spread_to_curve
+    curves = corporate_bonds.map do |corporate_bond|
+      lower, upper = closest_government_bonds(corporate_bond: corporate_bond)
+      spread = interpolated_yield(corporate: corporate_bond, lower: lower, upper: upper)
+      [corporate_bond.id, spread]
+    end
+
+    to_csv(headers: SPREAD_TO_CURVE_HEADERS, rows: curves)
+  end
+
   private
 
   def closest_government_bond(corporate_bond:)
     government_bonds.min_by do |bond|
       delta(bond.term, corporate_bond.term)
     end
+  end
+
+  def closest_government_bonds(corporate_bond:)
+    lower_bonds, upper_bonds = government_bonds.partition do |bond|
+      bond.term <= corporate_bond.term
+    end
+
+    [lower_bonds.max_by(&:term), upper_bonds.min_by(&:term)]
+  end
+
+  def interpolated_yield(corporate:, lower:, upper:)
+    corporate.yield_spread - (
+      (
+        (corporate.term - lower.term) * upper.yield_spread +
+        (upper.term - corporate.term) * lower.yield_spread
+      ) / (upper.term - lower.term)
+    )
   end
 
   def delta(minuend, subtrahend)
